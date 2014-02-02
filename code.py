@@ -74,10 +74,39 @@ def unique_sets(dct):
         result[key] = set(category) - all_others
     return result
 
+def analyze_indegree(graph, show_table=False, show_plot=False):
+    """Run analysis on indegree."""
+    indegrees = pandas.Series(graph.in_degree(), name='indegree')
+    if show_table:
+        print('There are {} nodes with indegree <5.'
+                .format(len(indegrees[indegrees < 5].values)))
+        print('There are {} nodes with indegree <10.'
+                .format(len(indegrees[indegrees < 10].values)))
+        print('There are {} nodes with indegree <50.'
+                .format(len(indegrees[indegrees < 50].values)))
+        print('There are {} nodes with indegree >99.'
+                .format(len(indegrees[indegrees > 99].values)))
+    if show_plot:
+        hist = indegrees[indegrees < 50].hist()
+        hist.set_title('Histogram of indegrees (<50)')
+        hist.set_ylabel('Number of patents')
+        hist.set_xlabel('Indegree')
+        plt.show()
+
+def analyze_pagerank(graph, show_table=False, show_plot=False):
+    """Run analysis on pagerank."""
+    if not (show_table or show_plot):
+        return # expensive computation, skip if unneccessary
+    indegrees = pandas.Series(graph.in_degree(), name='indegree')
+    pagerank = pandas.Series(networkx.pagerank_scipy(graph, max_iter=200),
+            name='pagerank')
+    table = pandas.DataFrame({'indegree': graph.in_degree()})
+    table.sort(inplace=True)
+
 def analyze_nhood_overlap(graph, show_table=False, show_plot=False):
     """Run analysis about neighborhood overlaps."""
     indegrees = pandas.Series(graph.in_degree(), name='indegree')
-    high_indegrees = indegrees.order().tail(20).index # top 20
+    high_indegrees = indegrees.order().tail(10).index # top 10
     nhoods = neighborhood(graph, high_indegrees)
     bignodes = pandas.Series({
         node: len(set(high_indegrees) & set(nhood))
@@ -131,8 +160,11 @@ def test():
     metadata = read_metadata(metafiles)
     annotate_graph(graph, metadata)
     print('done.')
+    print('Nodes', graph.number_of_nodes())
+    print('Edges', graph.number_of_edges())
 
     # Analyses
+    analyze_indegree(graph, show_table=True, show_plot=False)
     analyze_nhood_overlap(graph, show_table=False)
     analyze_nhood_size(graph, show_table=False, show_plot=False)
 
