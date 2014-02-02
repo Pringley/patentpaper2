@@ -62,7 +62,39 @@ def read_tsv(filename, index_col=None):
                            dtype=object,
                            low_memory=False)
 
-def analyze_neighborhoods(graph, show_table=False, show_plot=False):
+def unique_sets(dct):
+    """Given a dict of iterables, return unique elements in each."""
+    result = {}
+    for key, category in dct.items():
+        remaining = dct.copy()
+        del remaining[key]
+        all_others = set()
+        for others in remaining.values():
+            all_others |= set(others)
+        result[key] = set(category) - all_others
+    return result
+
+def analyze_nhood_overlap(graph, show_table=False, show_plot=False):
+    """Run analysis about neighborhood overlaps."""
+    indegrees = pandas.Series(graph.in_degree(), name='indegree')
+    high_indegrees = indegrees.order().tail(20).index # top 20
+    nhoods = neighborhood(graph, high_indegrees)
+    bignodes = pandas.Series({
+        node: len(set(high_indegrees) & set(nhood))
+        for node, nhood in nhoods.items()
+    }, name='bignodes')
+    unique_nhoods = unique_sets(nhoods)
+    unique_factors = pandas.Series({
+        node: len(unique_nhoods[node]) / len(nhoods[node])
+        for node in nhoods
+    }, name='percentunique')
+    if show_table:
+        table = pandas.DataFrame(indegrees)
+        print(table.join(unique_factors, how='right')
+                   .join(bignodes)
+                   .sort(columns='indegree', ascending=False))
+
+def analyze_nhood_size(graph, show_table=False, show_plot=False):
     """Run analysis about neighborhood sizes."""
     indegrees = pandas.Series(graph.in_degree(), name='indegree')
     high_indegrees = indegrees.order().tail(20).index # top 20
@@ -101,7 +133,8 @@ def test():
     print('done.')
 
     # Analyses
-    analyze_neighborhoods(graph, show_table=True, show_plot=False)
+    analyze_nhood_overlap(graph, show_table=False)
+    analyze_nhood_size(graph, show_table=False, show_plot=False)
 
 if __name__ == '__main__':
     test()
