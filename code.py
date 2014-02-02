@@ -1,8 +1,10 @@
 """Patent citation network case study."""
 
+import scipy.stats
 import pandas
 import networkx
 import matplotlib.pyplot as plt
+import collections
 
 def neighborhood(graph, nbunch, depth=1, closed=False):
     """Return the neighborhood of a node or nodes."""
@@ -99,9 +101,62 @@ def analyze_pagerank(graph, show_table=False, show_plot=False):
         return # expensive computation, skip if unneccessary
     indegrees = pandas.Series(graph.in_degree(), name='indegree')
     pagerank = pandas.Series(networkx.pagerank_scipy(graph, max_iter=200),
-            name='pagerank')
-    table = pandas.DataFrame({'indegree': graph.in_degree()})
-    table.sort(inplace=True)
+            name='pagescore')
+    table = (pandas.DataFrame({'indegree': graph.in_degree()})
+                   .sort(columns='indegree', ascending=False))
+    table['indegree_rank'] = pandas.Series(range(1, len(table)+1),
+                                           index=table.index)
+    table = table.join(pagerank).sort(columns='pagescore',
+            ascending=False)
+    table['page_rank'] = pandas.Series(range(1, len(table)+1),
+                                       index=table.index)
+    slope, intercept, r_val, p_val, stderr = scipy.stats.linregress(
+            table['pagescore'], table['indegree'])
+    if show_table:
+        print('pagescore and indegree have r == {}'.format(r_val))
+        print(table.head(10))
+
+def big_companies(graph, metadata, show_table=False):
+    """Compute the big companies."""
+    ingraph = pandas.Series({
+        applnID: str(int(applnID)) in graph
+        for applnID in metadata.index
+    }, name='ingraph')
+    metadata = metadata.join(ingraph)
+    companies = (metadata[metadata['ingraph'] == True]['appMyName']
+                    .dropna())
+    patents = pandas.DataFrame({
+        'patents': collections.Counter(companies.values)
+    })
+    if show_table:
+        print('{}/{} ({}) nodes with company metadata'
+                .format(len(companies),
+                    graph.number_of_nodes(),
+                    len(companies) / graph.number_of_nodes()))
+        print(patents.sort(columns='patents', ascending=False)
+                .head(10))
+
+def visualize_cluster(graph, index=1, show_plot=False):
+    """Display visualizations for clusters."""
+    indegrees = pandas.Series(graph.in_degree(), name='indegree')
+    high_indegrees = indegrees.order().tail(10).index # top 10
+    nhoods = neighborhood(graph, high_indegrees)
+    root = high_indegrees[-index]
+    cluster = networkx.subgraph(graph, nhoods[root])
+    if show_plot:
+        nodelist = cluster.nodes()
+        cluster_indg = [cluster.in_degree(node) for node in nodelist]
+        pos = networkx.spring_layout(cluster, k=.2, iterations=500)
+        fig = networkx.draw_networkx_edges(cluster, pos,
+                width=.7,
+                alpha=.7)
+        fig = networkx.draw_networkx_nodes(cluster, pos,
+                node_size=50,
+                node_color=cluster_indg,
+                vmin=min(cluster_indg),
+                vmax=max(cluster_indg),
+                nodelist=nodelist)
+        plt.show()
 
 def analyze_nhood_overlap(graph, show_table=False, show_plot=False):
     """Run analysis about neighborhood overlaps."""
@@ -164,7 +219,11 @@ def test():
     print('Edges', graph.number_of_edges())
 
     # Analyses
-    analyze_indegree(graph, show_table=True, show_plot=False)
+    big_companies(graph, metadata, show_table=True)
+    visualize_cluster(graph, index=1, show_plot=False)
+    visualize_cluster(graph, index=5, show_plot=False)
+    analyze_pagerank(graph, show_table=False, show_plot=False)
+    analyze_indegree(graph, show_table=False, show_plot=False)
     analyze_nhood_overlap(graph, show_table=False)
     analyze_nhood_size(graph, show_table=False, show_plot=False)
 
