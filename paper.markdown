@@ -7,15 +7,15 @@ bibliography: references.bib
 
 #### Abstract {-}
 
-We take several approaches to the analysis of a dataset including a network of
-LED patents and their metadata in order to answer questions about the domain.
-We are motivated to find correlations between the metadata and network
-structure; for example, are central patents in the network produced by bigger
-or smaller companies?
+Analysis of a dataset including a network of LED patents and their metadata is
+carried out using several methods in order to answer questions about the
+domain.  We are interested in finding the relationship between the metadata and
+the network structure; for example, are central patents in the network produced
+by larger or smaller companies?
 
 We begin by exploring the structure of the network without any metadata,
 applying known techniques in citation analysis and a simple clustering scheme.
-We then combine these techinques with metadata analysis to draw preliminary
+These techinques are then combined with metadata analysis to draw preliminary
 conclusions about the dataset.
 
 # Introduction
