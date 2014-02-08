@@ -91,11 +91,12 @@ The graph has 127,526 nodes and 327,479 edges.
 
 ![Histogram of patents with 50 or more citations](indeghist50up.png)
 
-Popularized by @garfield64, the simplest way to determine a patent is counting
-its forward citations -- that is, other patents which cite the patent in
-question. In a citation network where edges are drawn from the citing patent
-to the cited patent, the number of forward citations for a given node is its
-**indegree**, or the number of edges ending at the given node.
+Popularized by @garfield64, the simplest way to determine a patent's relative
+importance is counting its forward citations -- that is, other patents which
+cite the patent in question. In a citation network where edges are drawn from
+the citing patent to the cited patent, the number of forward citations for a
+given node is its **indegree**, or the number of edges ending at the given
+node.
 
 In our data, 89% of patents have fewer than 5 citations, and 99% have fewer
 than 50. Nevertheless, there is a small group of slightly over fifty patents
