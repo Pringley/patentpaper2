@@ -153,7 +153,8 @@ The following chart shows the top ten patents sorted by PageRank:
 46666643   0.000173          9       235              7
 47823143   0.000168         10        47            342
 
-Within our dataset, PageRank and indegree are correlated with $r=.80$.
+Within our dataset, PageRank and indegree are correlated with a Pearson
+product-moment coefficient of $r=.80$.
 
 #### Computation
 
