@@ -25,14 +25,14 @@ such as scholarly articles or patents. Each document is represented by a
 **node** in the graph, and each citation is represented by an **edge**
 connecting the *citing* node to the *cited* node.
 
-There has been some prior work in the area of citation network analysis.
-@garfield64 popularized the systematic use of forward citation count as a
-metric for scholarly influence. @hummon89 defined several new metrics to track
-paths of influence, which were later improved by @batagelj03.  The PageRank
-algorithm was introduced by @page99rank. It originally powered the Google
-search engine, treating hypertext links as "citations" between documents on
-the world wide web. These are merely a select few prior works -- this listing
-fails to exhaust even the highlights.
+Earlier work in the area of citation network analysis by @garfield64
+popularized the systematic use of forward citation count as a metric for
+scholarly influence. @hummon89 defined several new metrics to track paths of
+influence, which were later improved by @batagelj03.  The PageRank algorithm
+was introduced by @page99rank. It originally powered the Google search engine,
+treating hypertext links as "citations" between documents on the world wide
+web. These are merely a select few prior works -- this listing fails to exhaust
+even the highlights.
 
 ## Case study: LED patents
 
@@ -55,15 +55,15 @@ the cited `applnID`), in addition to several metadata fields:
 polymer films, one of the key advances that lead to the development of organic
 LEDs. (This is `applnID` 47614741 in our dataset.)
 
-Kodak researchers @vanslyke85 built on this research when they filed a new
-patent demonstrating improved power conversion in organic electroluminescent
-devices.  (This is `applnID` 51204521 in our dataset.) Another group of Kodak
-scientists, @tang88, patented the first organic LED device, now used in
-televisions, monitors, and phones.
+Kodak researchers @vanslyke85 built on this work when they filed a new patent
+demonstrating improved power conversion in organic electroluminescent devices.
+(This is `applnID` 51204521 in our dataset.) Another group of Kodak scientists,
+@tang88, patented the first organic LED device, now used in televisions,
+monitors, and phones.
 
 ## Computation
 
-The computation for this paper was performed using the Python programming
+The computation for our analysis was performed using the Python programming
 language (<http://python.org/>) and the following libraries:
 
 -   `networkx` for network representation and analysis [@hagberg08]
@@ -72,7 +72,7 @@ language (<http://python.org/>) and the following libraries:
 -   `matplotlib` for creating plots [@hunter07]
 
 More information about the code written for this paper can be found under the
-[Code](#code) section.
+section, [Code](#code).
 
 # Approaches
 
