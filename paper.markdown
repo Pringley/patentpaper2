@@ -393,8 +393,8 @@ kodak      2          2003-09-24  2008-02-25  1.7042801556420233  257    767
 
 # Conclusions
 
-Based on our meta-metrics, it seems that while big companies file many patent
-applications, these patents are *not* any lower quality than average.
+Based on our meta-metrics, it appears that while large companies file many patent
+applications, these patents are *not* of any lower quality than average.
 
 By the normalized summed outdegree measure, the top 10 companies each had a
 mean outdegree more than *double* that of the entire dataset.
