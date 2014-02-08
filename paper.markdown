@@ -61,6 +61,11 @@ demonstrating improved power conversion in organic electroluminescent devices.
 @tang88, patented the first organic LED device, now used in televisions,
 monitors, and phones.
 
+This background helps to validate our methods for classifying patents as
+"important." A good algorithm should classify the 47614741 and 51204521 nodes
+as significant. When we present our techniques, we will use this as one metric
+of success.
+
 ## Computation
 
 The computation for our analysis was performed using the Python programming
