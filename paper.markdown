@@ -124,11 +124,11 @@ We computed indegree using `networkx.DiGraph.in_degree()` [@hagberg08].
 ### PageRank
 
 Another technique for classifying important nodes in a graph is PageRank
-[@page99rank], one of the most famous algorithms used by the Google search
-engine to rank web pages.
+[@page99rank], a famous algorithm used by the Google search engine to rank web
+pages.
 
 PageRank calculates the probability that someone randomly following citations
-will end up at a given patent. The damping factor $d$ represents the
+will arrive at a given patent. The damping factor $d$ represents the
 probability at each step that the reader will continue on to the next patent.
 
 For each patent in our dataset, we calculated:
@@ -175,7 +175,7 @@ clusters in a *directed* citation network:
 We considered using larger neighborhoods. The $n$-neighborhood can be computed
 recursively by adding all patents citing any patents in the
 $(n-1)$-neighborhood. However, these larger neighborhoods grow in size very
-quickly. For our purposes (quick computation and visualization), we decided to
+quickly. For our purposes of quick computation and visualization, we chose to
 keep the smaller clusters from 1-neighborhoods.
 
 This technique creates *overlapping* clusters, where a node can belong to more
@@ -234,13 +234,13 @@ nodes to neighborhood `set`s.
 
 ## Metadata analytics
 
-Note that only 44356 out of 127526 patents in our dataset (roughly 35%) were
-supplied with `appMyName` (company name).
+Note that only about 35% of the patents in our dataset (44356 out of 127526)
+were supplied with `appMyName` (company name).
 
 ### Choosing a metric for company size
 
 We would like to explore whether company size has any correlation with patent
-quality.  Do big innovations originate from big labs, or do smaller companies
+quality.  Do major innovations originate from big labs, or do smaller companies
 pave the way (only to be later acquired)?
 
 In order to begin this investigation, we need a solid metric to quantify
@@ -249,16 +249,16 @@ the company's net worth or number of employees. However, it wasn't clear at
 *which point in time* to measure the company size -- does a company's employee
 count in 2013 affect the quality of a patent it filed in the 1980s?
 
-Instead, we choose a very simple metric contained within our dataset: company
-size is defined as the **number of patents submitted**.
+Instead, we choose a simple metric contained within our dataset: company size
+is defined as the **number of patents submitted**.
 
 This may not be a perfect representation of "size," but it still allows us to
 analyze whether these "prolific" companies are contributing any *important*
 patents or merely a large volume of consequential patents.
 
-Our set of "big companies" will therefore be the 25 companies that applied for
-the largest number of patents. They are, in order with number of LED patents
-each:
+Our set of "large companies" will therefore be the 25 companies that applied
+for the largest number of patents. They are, in order with number of LED
+patents each:
 
 > `samsung` (1673), `semiconductor energy lab` (1437), `seiko` (1394), `sharp`
 > (1103), `panasonic` (1094), `sony` (937), `toshiba` (848), `sanyo (tokyo
