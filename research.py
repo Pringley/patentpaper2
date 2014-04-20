@@ -39,28 +39,24 @@ def main():
     graph_key = redis_prefix + 'main_graph'
     metadata_key = redis_prefix + 'main_metadata'
     if rc:
-        with timed('Checking redis for pickled graph'):
-            pickled_graph = rc.get(graph_key)
-            pickled_metadata = rc.get(metadata_key)
+        pickled_graph = rc.get(graph_key)
+        pickled_metadata = rc.get(metadata_key)
     else:
         pickled_graph = None
 
     if pickled_graph and pickled_metadata:
-        with timed('Loading graph from pickle'):
-            graph = pickle.loads(pickled_graph)
-            metadata = pickle.loads(pickled_metadata)
+        graph = pickle.loads(pickled_graph)
+        metadata = pickle.loads(pickled_metadata)
     else:
         with timed('Loading graph from file'):
             graph = read_graph(graph_file)
             metadata = read_metadata(meta_files)
             annotate_graph(graph, metadata)
         if rc:
-            with timed('Writing graph to pickle'):
-                pickled_graph = pickle.dumps(graph)
-                pickled_metadata = pickle.dumps(metadata)
-            with timed('Saving pickled graph to redis'):
-                rc.set(graph_key, pickled_graph)
-                rc.set(metadata_key, pickled_metadata)
+            pickled_graph = pickle.dumps(graph)
+            pickled_metadata = pickle.dumps(metadata)
+            rc.set(graph_key, pickled_graph)
+            rc.set(metadata_key, pickled_metadata)
 
     print(graph.number_of_nodes())
     print(metadata.columns)
