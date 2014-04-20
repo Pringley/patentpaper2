@@ -13,7 +13,22 @@ import networkx
 import matplotlib.pyplot as plt
 import redis
 
-def main():
+_graph = None
+_metadata = None
+
+def graph():
+    global _graph
+    if _graph is None:
+        load_graph_and_metadata()
+    return _graph
+
+def metadata():
+    global _metadata
+    if _metadata is None:
+        load_graph_and_metadata()
+    return _metadata
+
+def load_graph_and_metadata():
     redis_read = os.environ.get('PATENT_REDIS_READ', True)
     redis_write = os.environ.get('PATENT_REDIS_WRITE', True)
     redis_host = os.environ.get('REDIS_HOST', 'localhost')
@@ -55,6 +70,7 @@ def main():
             for filename in (
                 'LEDs patents keyinfo.txt',
                 'LEDs patents applicants longform.txt',
+                'LEDs patents ipcas longform.txt',
             )]
         with timed('Loading graph from file'):
             graph = read_graph(graph_file)
@@ -68,8 +84,10 @@ def main():
             rc.set(graph_key, pickled_graph)
             rc.set(metadata_key, pickled_metadata)
 
-    print(graph.number_of_nodes())
-    print(metadata.columns)
+    global _graph
+    global _metadata
+    _graph = graph
+    _metadata = metadata
 
 @contextlib.contextmanager
 def timed(description):
