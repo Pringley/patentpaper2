@@ -14,22 +14,13 @@ import matplotlib.pyplot as plt
 import redis
 
 def main():
-    data_dir = os.environ.get('PATENT_DATA_DIR',
-        os.path.expanduser('~/Downloads/PatentNetworks'))
-    graph_file = os.path.join(data_dir,
-        'citation pairs by applnID simple try sorted by citing.txt')
-    meta_files = [
-        os.path.join(data_dir, filename)
-        for filename in (
-            'LEDs patents keyinfo.txt',
-            'LEDs patents applicants longform.txt',
-        )]
-
     redis_read = os.environ.get('PATENT_REDIS_READ', True)
     redis_write = os.environ.get('PATENT_REDIS_WRITE', True)
     redis_host = os.environ.get('REDIS_HOST', 'localhost')
     redis_port = os.environ.get('REDIS_PORT', 6379)
     redis_prefix = os.environ.get('PATENT_REDIS_PREFIX', 'patentdata:')
+
+    # Attempt to connect to Redis server.
     try:
         rc = redis.StrictRedis(host=redis_host, port=redis_port,
                                socket_timeout=2)
@@ -39,6 +30,7 @@ def main():
         rc = None
         redis_read = redis_write = None
 
+    # Check Redis server for pre-loaded graph and metadata.
     graph_key = redis_prefix + 'main_graph'
     metadata_key = redis_prefix + 'main_metadata'
     if redis_read:
@@ -47,14 +39,29 @@ def main():
     else:
         pickled_graph = None
 
+    # If we found pre-loaded data in Redis, unpickle it.
     if pickled_graph and pickled_metadata:
         graph = pickle.loads(pickled_graph)
         metadata = pickle.loads(pickled_metadata)
+
+    # If there was no data in Redis, load it from file instead.
     else:
+        data_dir = os.environ.get('PATENT_DATA_DIR',
+            os.path.expanduser('~/Downloads/PatentNetworks'))
+        graph_file = os.path.join(data_dir,
+            'citation pairs by applnID simple try sorted by citing.txt')
+        meta_files = [
+            os.path.join(data_dir, filename)
+            for filename in (
+                'LEDs patents keyinfo.txt',
+                'LEDs patents applicants longform.txt',
+            )]
         with timed('Loading graph from file'):
             graph = read_graph(graph_file)
             metadata = read_metadata(meta_files)
             annotate_graph(graph, metadata)
+
+        # If allowed, pickle the graph and metadata and write it back to Redis.
         if redis_write:
             pickled_graph = pickle.dumps(graph)
             pickled_metadata = pickle.dumps(metadata)
