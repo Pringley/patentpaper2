@@ -25,6 +25,8 @@ def main():
             'LEDs patents applicants longform.txt',
         )]
 
+    redis_read = os.environ.get('PATENT_REDIS_READ', True)
+    redis_write = os.environ.get('PATENT_REDIS_WRITE', True)
     redis_host = os.environ.get('REDIS_HOST', 'localhost')
     redis_port = os.environ.get('REDIS_PORT', 6379)
     redis_prefix = os.environ.get('PATENT_REDIS_PREFIX', 'patentdata:')
@@ -35,10 +37,11 @@ def main():
         print('Could not connect to Redis instance at {}:{}. '
               'Caching disabled.'.format(redis_host, redis_port))
         rc = None
+        redis_read = redis_write = None
 
     graph_key = redis_prefix + 'main_graph'
     metadata_key = redis_prefix + 'main_metadata'
-    if rc:
+    if redis_read:
         pickled_graph = rc.get(graph_key)
         pickled_metadata = rc.get(metadata_key)
     else:
@@ -52,7 +55,7 @@ def main():
             graph = read_graph(graph_file)
             metadata = read_metadata(meta_files)
             annotate_graph(graph, metadata)
-        if rc:
+        if redis_write:
             pickled_graph = pickle.dumps(graph)
             pickled_metadata = pickle.dumps(metadata)
             rc.set(graph_key, pickled_graph)
